@@ -1,5 +1,6 @@
 /* Run with cc -std=c11 tests/framing.c -o /tmp/witn-framing && /tmp/witn-framing */
 #include <assert.h>
+#include <string.h>
 #include "../src/framing.h"
 
 static void expect(PhotoCropRect rect, int left, int top, int right, int bottom) {
@@ -12,6 +13,24 @@ static void expect_size(PhotoSize size, int width, int height) {
 }
 
 int main(void) {
+    /* F5 keeps the selected F6 orientation. The UI must describe the same
+       width-to-height ratio that the shutter uses in both orientations. */
+    const char *expected[][2] = {
+        {"Viewport", "Viewport"}, {"3:2", "2:3"}, {"4:3", "3:4"}, {"1:1", "1:1"},
+        {"16:9", "9:16"}, {"5:4", "4:5"}, {"21:9", "9:21"}, {"65:24", "24:65"},
+        {"Spread 89:35", "Spread 35:89"},
+    };
+    _Static_assert(sizeof expected / sizeof *expected == FRAME_COUNT, "cover every frame preset");
+    for (int frame = 0; frame < FRAME_COUNT; ++frame) {
+        for (int portrait = 0; portrait < 2; ++portrait) {
+            char label[32];
+            frame_label(label, sizeof label, frame, portrait);
+            assert(strcmp(label, expected[frame][portrait]) == 0);
+            PhotoCropRect crop = frame_crop(3840, 2160, frame, portrait);
+            int w = crop.right - crop.left, h = crop.bottom - crop.top;
+            assert(frame == 3 ? w == h : (portrait ? h > w : w > h));
+        }
+    }
     /* 4K 65:24 shutter. Applying the ratio a second time at half resolution
        gives a misleading 3770x1392 guide instead of the real 3835x1416. */
     expect(frame_crop(3840, 2160, 7, 0), 2, 372, 3837, 1788);

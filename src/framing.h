@@ -1,21 +1,35 @@
 #ifndef WITN_FRAMING_H
 #define WITN_FRAMING_H
 
+#include <stdio.h>
+
 typedef struct {
     int left, top, right, bottom;
 } PhotoCropRect;
 static const struct {
-    const char *name;
+    const char *prefix;
     int horizontal, vertical;
-} frames[] = {{"Viewport", 0, 0}, {"3:2", 3, 2}, {"4:3", 4, 3},   {"1:1", 1, 1},
-              {"16:9", 16, 9},    {"5:4", 5, 4}, {"21:9", 21, 9}, {"65:24", 65, 24},
-              {"Spread 89:35", 89, 35}};
+} frames[] = {{"Viewport", 0, 0}, {"", 3, 2}, {"", 4, 3}, {"", 1, 1}, {"", 16, 9},
+              {"", 5, 4}, {"", 21, 9}, {"", 65, 24}, {"Spread ", 89, 35}};
 enum { FRAME_COUNT = sizeof frames / sizeof *frames, FRAME_MAX_DIMENSION = 16384,
        FRAME_MAX_SCALE = 4, FRAME_TIMED_LONG_EDGE = 3840 };
 
 typedef struct {
     int width, height;
 } PhotoSize;
+
+static inline PhotoSize frame_ratio(int frame, int portrait) {
+    int w = frames[frame].horizontal, h = frames[frame].vertical;
+    return portrait ? (PhotoSize){h, w} : (PhotoSize){w, h};
+}
+
+static inline void frame_label(char *out, size_t size, int frame, int portrait) {
+    PhotoSize ratio = frame_ratio(frame, portrait);
+    if (ratio.width)
+        snprintf(out, size, "%s%d:%d", frames[frame].prefix, ratio.width, ratio.height);
+    else
+        snprintf(out, size, "%s", frames[frame].prefix);
+}
 
 static inline int frame_scale_fits(int viewport_width, int viewport_height, int scale, int timed) {
     if (scale < 1 || scale > FRAME_MAX_SCALE)
@@ -59,18 +73,14 @@ static inline PhotoCropRect frame_crop(int width, int height, int frame, int por
     PhotoCropRect r = {0, 0, width, height};
     if (width <= 0 || height <= 0 || frame < 0 || frame >= FRAME_COUNT)
         return r;
-    int a = frames[frame].horizontal, b = frames[frame].vertical;
+    PhotoSize ratio = frame_ratio(frame, portrait);
+    int a = ratio.width, b = ratio.height;
     if (!a) {
         if (!portrait)
             return r;
         int divisor = gcd(width, height);
-        a = width / divisor;
-        b = height / divisor;
-    }
-    if (portrait) {
-        int swap = a;
-        a = b;
-        b = swap;
+        a = height / divisor;
+        b = width / divisor;
     }
     int sx = width / a, sy = height / b;
     int scale = sx < sy ? sx : sy;

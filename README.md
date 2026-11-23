@@ -1,5 +1,7 @@
 # War in the North Legacy Edition Photo Camera
 
+**Tested only on Linux.** Gameplay testing used Steam Proton.
+
 Press **F8** in a single-player level to freeze the action and detach the camera. **F9** takes a lossless PNG with the game's display treatment. **F3** also saves the matching scene color as an OpenEXR. Both shutters use the finder crop and omit the mod's guides.
 
 This native Windows mod targets Steam app 2523770, build 25804416, changelist 558552. It checks the PE timestamp, image size and the instructions at its camera and renderer entry points. The supported `witn.exe` has SHA-256 `68bc57f6fd464242a786360e1dd4d963769401e46aa47fc85085d0f0c9935ef2`.
@@ -8,8 +10,8 @@ This native Windows mod targets Steam app 2523770, build 25804416, changelist 55
 
 Download the ZIP for your platform. Both editions use the same x64 DLL. On Linux, Proton loads it into the Windows game.
 
-- [Windows x64 download](https://github.com/NewBarkTownKris/witn-photo-camera/releases/download/v0.1.0/witn-photo-camera-0.1.0-windows-x64.zip)
-- [Linux with Proton download](https://github.com/NewBarkTownKris/witn-photo-camera/releases/download/v0.1.0/witn-photo-camera-0.1.0-linux-proton.zip)
+- [Windows x64 download](https://github.com/NewBarkTownKris/witn-photo-camera/releases/download/v0.1.1/witn-photo-camera-0.1.1-windows-x64.zip)
+- [Linux with Proton download](https://github.com/NewBarkTownKris/witn-photo-camera/releases/download/v0.1.1/witn-photo-camera-0.1.1-linux-proton.zip)
 
 Close the game, extract the ZIP, and copy `dbghelp.dll` beside `witn.exe`. In Steam, **Manage → Browse local files** opens that folder. On Windows, launch the game normally. On Linux, first add the following in **Properties → General → Launch Options**. Merge the `dbghelp=n,b` entry if you already use DLL overrides.
 
@@ -36,7 +38,8 @@ The first F8 starts from the gameplay view. F8 again restores the game camera, H
 | F2 | Choose a photo folder in the Windows or Proton folder picker |
 | F4 or left stick click | Open or close Photo Studio. Use arrows or D-pad to select and adjust rows. |
 | F1, H, G or R | Toggle help, toggle finder, toggle thirds grid or cycle the reticle |
-| F5 / F6 | Cycle the crop or switch landscape and portrait |
+| F5 | Cycle aspect ratios in the current orientation |
+| F6 | Rotate the frame between landscape and portrait |
 | N, right stick click or middle-click | Focus once on the center collision surface. A miss keeps the current distance. |
 | T | Switch continuous center autofocus and focus lock |
 | J / K and L | Focus nearer or farther, and switch between 20% and 1% steps |
@@ -50,6 +53,8 @@ With Studio closed, the wheel adjusts focus. Shift or Ctrl with the wheel adjust
 If you switch away from the game during photo mode, your first left or middle click back in the finder resumes mouse look. The next click operates the shutter or autofocus as usual. Keyboard and controller aiming stay available while the mouse is released.
 
 The finder offers optical, square, circle and off reticles. Crop choices are viewport, 3:2, 4:3, 1:1, 16:9, 5:4, 21:9, 65:24 and Spread 89:35. At 3840 × 2160, portrait 3:2 produces 1440 × 2160 and landscape 65:24 produces 3835 × 1416 at 1×. F11 controls the game HUD, so showing it includes it in the PNG.
+
+For a widescreen shot, set **F4 → Orientation → Landscape**, then pick **21:9**, **65:24** or **Spread 89:35**. From a 16:9 display the finder puts bars above and below the image, and the shutter saves the area between them. If the finder reads **24:65 Portrait**, press **F6** once to return to **65:24 Landscape**. The orientation carries over when you change presets.
 
 ## Capture for print
 
@@ -108,11 +113,11 @@ Physical controller input and native Windows gameplay still need direct verifica
 
 ## Build from source
 
-Run `./build.sh` on Linux with Clang, LLD and the 64-bit Wine development headers and import libraries. It cross-compiles `build/dbghelp.dll` for both platforms. These commands reproduce the v0.1.0 DLL with the release toolchain (Clang and LLD 23.1.5) and package both downloads.
+Run `./build.sh` on Linux with Clang, LLD and the 64-bit Wine development headers and import libraries. It cross-compiles `build/dbghelp.dll` for both platforms. These commands reproduce the v0.1.1 DLL with the release toolchain (Clang and LLD 23.1.5) and package both downloads.
 
 ```sh
-SOURCE_DATE_EPOCH=1795411436 ./build.sh
-python3 tools/package_release.py --version 0.1.0 --output dist/v0.1.0
+./build.sh
+python3 tools/package_release.py --version 0.1.1 --output dist/v0.1.1
 ```
 
 This project adapts the photographic controls and exporters from [Denshattack! Photo Camera](https://github.com/NewBarkTownKris/denshattack-photo-camera). The original finder and controls were inspired by technicallyalex’s [VHOLUME Photo Camera](https://github.com/technicallyalex/vholume-photo-camera).

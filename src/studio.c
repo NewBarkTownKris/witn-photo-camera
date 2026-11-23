@@ -314,9 +314,10 @@ static void finder_ui(int w, int h) {
     int top = bottom - row_count * rh - 2 * scaled(5), right = smaller(w - margin, margin + scaled(660));
     fill(margin, top, right, bottom, PANEL);
     fill(margin, top, margin + scaled(3), bottom, ACCENT);
-    char title[100];
-    wsprintfA(title, "%d mm     %s%s", drawn.lens, frames[drawn.frame].name,
-              drawn.portrait ? "   Portrait" : "");
+    char title[100], frame_text[32];
+    frame_label(frame_text, sizeof frame_text, drawn.frame, drawn.portrait);
+    wsprintfA(title, "%d mm     %s   %s     F6 Rotate", drawn.lens, frame_text,
+              drawn.portrait ? "Portrait" : "Landscape");
     int y = top + scaled(5);
     line(title, margin + pad, y, right - pad, rh, WHITE_TEXT, TRUE, FALSE);
     if (drawn.status[0]) {
@@ -584,6 +585,8 @@ void studio_tick(HWND game, BOOL active, BOOL (*pressed)(int), WORD pad_edges, i
     if (extra && extra->help)
         lstrcpynA(next.extra_help, extra->help, sizeof next.extra_help);
     if (panel) {
+        char frame_text[32];
+        frame_label(frame_text, sizeof frame_text, settings.frame, settings.portrait);
         next.first = larger(0, smaller(total - SHOW_ROWS, selected - SHOW_ROWS / 2));
         for (int i = 0; i < SHOW_ROWS && next.first + i < total; i++) {
             Row *row = next.rows + i;
@@ -599,7 +602,7 @@ void studio_tick(HWND game, BOOL active, BOOL (*pressed)(int), WORD pad_edges, i
             } else {
                 int key = index - n;
                 lstrcpynA(row->label, composition[key], sizeof row->label);
-                const char *values[] = {frames[settings.frame].name,
+                const char *values[] = {frame_text,
                                         settings.portrait ? "Portrait" : "Landscape", "",
                                         reticles[settings.reticle], settings.grid ? "On" : "Off"};
                 lstrcpynA(row->value, values[key], sizeof row->value);
