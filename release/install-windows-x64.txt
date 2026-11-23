@@ -1,0 +1,10 @@
+War in the North Legacy Edition Photo Camera for Windows x64
+
+1. Close the game and extract this ZIP.
+2. Open the game's installed files from its Steam library entry. Locate witn.exe in the LORWIN folder.
+3. Copy dbghelp.dll from this package beside witn.exe. If another mod supplies that filename, keep a backup of its DLL before replacing it.
+4. Launch the game from Steam. In a single-player level, press F8 to enter photo mode. F4 opens Photo Studio, F9 saves a PNG and F3 saves both a PNG and an EXR. F8 returns to gameplay.
+
+F2 selects the photo folder. The default is %LOCALAPPDATA%\WITNPhotoCamera\Photos. README.md contains the full controls and instructions for the optional TIFF and DNG exporter.
+
+To uninstall, close the game and remove this copy of dbghelp.dll. Restore the previous DLL if you backed one up.

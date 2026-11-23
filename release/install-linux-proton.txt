@@ -1,0 +1,16 @@
+War in the North Legacy Edition Photo Camera for Linux with Steam Proton
+
+1. Close the game and extract this ZIP.
+2. Open the game's installed files from its Steam library entry. Locate witn.exe in the LORWIN folder.
+3. Copy dbghelp.dll from this package beside witn.exe. Proton loads this DLL into the Windows game. If another mod supplies that filename, keep a backup of its DLL before replacing it.
+4. In the game's Steam Properties, set Launch Options to the following line.
+
+   WINEDLLOVERRIDES="dbghelp=n,b" %command%
+
+   If you already have launch options, keep your existing options and add the override. If WINEDLLOVERRIDES already contains entries, append ;dbghelp=n,b inside its quotes.
+
+5. Launch the game with Proton and enter a single-player level. F8 enters photo mode, F4 opens Photo Studio, F9 saves a PNG and F3 saves both a PNG and an EXR. F8 returns to gameplay.
+
+F2 selects the photo folder. The default in the Steam library is steamapps/compatdata/2523770/pfx/drive_c/users/steamuser/AppData/Local/WITNPhotoCamera/Photos. README.md contains the full controls and instructions for the optional TIFF and DNG exporter.
+
+To uninstall, close the game, remove this copy of dbghelp.dll and remove its Steam launch-option entry. Restore the previous DLL if you backed one up.

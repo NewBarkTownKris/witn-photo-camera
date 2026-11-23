@@ -1,0 +1,5 @@
+# Optional dependencies for developing scene-linear EXRs into TIFFs and DNGs.
+numpy>=1.24
+OpenEXR>=3.3
+OpenImageIO>=3.0
+Pillow>=10
